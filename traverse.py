@@ -6,6 +6,9 @@ import numpy as np
 # load csv of countries and their capitals
 countries = pd.read_csv('countries.csv')
 
+# nullify the last 30 rows, temu train/test split
+countries.loc[countries.tail(30).index, 'Capital'] = None
+
 model = gensim.downloader.load('word2vec-google-news-300')
 
 vector_dim = model.vector_size  
