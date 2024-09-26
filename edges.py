@@ -5,54 +5,60 @@ import spacy
 
 model = gensim.downloader.load('word2vec-google-news-300')
 
-print(len(model.index_to_key))
+print(f"vocabulary size: {len(model.index_to_key)}")
 
 relation_vector = {}
 
-similarity_ceiling = 0.85
-similarity_floor = 0.5
+similarity_ceiling = 0.60
+similarity_floor = 0.40
 edge_similarity_threshold = 0.75
 vocab_start = 300
 vocab_end =  1000
-vocab_topn = 1000
+vocab_topn = 10000
+
+nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
 
 def cosine_similarity(vec1, vec2):
     return dot(vec1, vec2) / (norm(vec1) * norm(vec2))
 
-relations = []
 
-# Load spaCy's small English model for POS tagging
-nlp = spacy.load("en_core_web_sm")
-
-# Function to check if a word is a noun
-def is_noun(word):
+def is_noun_and_singular_and_lowercase(word):
     doc = nlp(word)
-    # Check the first token in the word and its POS tag
-    return doc[0].pos_ == "NOUN"
+    token = doc[0]
+    return token.pos_ == "NOUN" and token.lemma_ == word and word.lower() == word
 
-nouns = [x for x in model.index_to_key if is_noun(x)]
+words_to_process = [word for word in model.index_to_key[:vocab_topn] if is_noun_and_singular_and_lowercase(word)]
 
-print(len(nouns))
+print(f"words selected for processing: {len(words_to_process)}")
 
-for word in model.index_to_key[vocab_start:vocab_end]:
-    for other_word in model.index_to_key[:vocab_topn]:
-        word_vec = model[word]
-        other_word_vec = model[other_word]
-        both_nouns = is_noun(word) and is_noun(other_word)
-        if (word != other_word) and (similarity_floor <= cosine_similarity(word_vec, other_word_vec) <= similarity_ceiling) and both_nouns:
-            relations.append((word, other_word, word_vec-other_word_vec))
+relations = []
+for i, word in enumerate(words_to_process):
+    word_vec = model[word]
+
+    most_similar = model.most_similar(positive=[word], topn=100)
+
+    for similar_word, score in most_similar:
+        in_range = (similarity_floor <= score <= similarity_ceiling)
+        in_words = similar_word in words_to_process
+        not_same = similar_word != word
+
+        if in_range and in_words and not_same:
+            relations.append((word, similar_word, word_vec - model[similar_word]))
 
 
-# print(relations)  
+print(f"relationships identified: {len(relations)}")
 
 relation_relations = []
 
-for edge in relations:
-    for other_edge in relations:
-        edge_vec = edge[2]
+for i, edge in enumerate(relations):
+    edge_vec = edge[2]
+    
+    for j, other_edge in enumerate(relations[i+1:]):
         other_edge_vec = other_edge[2]
-        woids = [edge[0],edge[1], other_edge[0], other_edge[1]]
-        if (edge != other_edge) and (cosine_similarity(edge_vec, other_edge_vec) > edge_similarity_threshold) and len(set(woids)) == len(woids):
-            relation_relations.append((edge[0],edge[1], other_edge[0], other_edge[1]))
+        if (cosine_similarity(edge_vec, other_edge_vec) > edge_similarity_threshold):
+            woids = (edge[0], edge[1], other_edge[0], other_edge[1])
+            if len(set(woids)) == len(woids):
+                relation_relations.append(tuple(woids))
+                print(woids)
 
 print(relation_relations)
