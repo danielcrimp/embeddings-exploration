@@ -14,7 +14,7 @@ similarity_floor = 0.40
 edge_similarity_threshold = 0.75
 vocab_start = 300
 vocab_end =  1000
-vocab_topn = 10000
+vocab_topn = 100000
 
 nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
 
@@ -44,21 +44,6 @@ for i, word in enumerate(words_to_process):
 
         if in_range and in_words and not_same:
             relations.append((word, similar_word, word_vec - model[similar_word]))
-
+            print([word, similar_word])
 
 print(f"relationships identified: {len(relations)}")
-
-relation_relations = []
-
-for i, edge in enumerate(relations):
-    edge_vec = edge[2]
-    
-    for j, other_edge in enumerate(relations[i+1:]):
-        other_edge_vec = other_edge[2]
-        if (cosine_similarity(edge_vec, other_edge_vec) > edge_similarity_threshold):
-            woids = (edge[0], edge[1], other_edge[0], other_edge[1])
-            if len(set(woids)) == len(woids):
-                relation_relations.append(tuple(woids))
-                print(woids)
-
-print(relation_relations)
