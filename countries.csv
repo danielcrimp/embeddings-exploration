@@ -1,36 +1,36 @@
 Country,Capital
 China,Beijing
-India,New Delhi
-United States,WashingtonDC
+India,New_Delhi
+United_States,WashingtonDC
 Indonesia,Jakarta
 Pakistan,Islamabad
 Brazil,Brasília
 Nigeria,Abuja
 Bangladesh,Dhaka
 Russia,Moscow
-Mexico,Mexico City
+Mexico,Mexico_City
 Japan,Tokyo
-Ethiopia,Addis Ababa
+Ethiopia,Addis_Ababa
 Philippines,Manila
 Egypt,Cairo
 Vietnam,Hanoi
-DR Congo,Kinshasa
+DR_Congo,Kinshasa
 Turkey,Ankara
 Iran,Tehran
 Germany,Berlin
 Thailand,Bangkok
-United Kingdom,London
+United_Kingdom,London
 France,Paris
 Italy,Rome
 Tanzania,Dodoma
-South Africa,Pretoria
+South_Africa,Pretoria
 Myanmar,Naypyidaw
 Kenya,Nairobi
-South Korea,Seoul
+South_Korea,Seoul
 Colombia,Bogotá
 Spain,Madrid
 Uganda,Kampala
-Argentina,Buenos Aires
+Argentina,Buenos_Aires
 Sudan,Khartoum
 Ukraine,Kyiv
 Iraq,Baghdad
@@ -38,15 +38,15 @@ Afghanistan,Kabul
 Poland,Warsaw
 Canada,Ottawa
 Morocco,Rabat
-Saudi Arabia,Riyadh
+New_Zealand,Wellington
 Uzbekistan,Tashkent
-Malaysia,Kuala Lumpur
+Malaysia,Kuala_Lumpur
 Peru,Lima
 Venezuela,Caracas
 Ghana,Accra
 Nepal,Kathmandu
 Yemen,Sana'a
 Madagascar,Antananarivo
-North Korea,Pyongyang
+North_Korea,Pyongyang
 Australia,Canberra
-Ivory Coast,Yamoussoukro
+Ivory_Coast,Yamoussoukro

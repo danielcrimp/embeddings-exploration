@@ -5,7 +5,7 @@ import numpy as np
 import spacy
 import h5py
 
-VOCAB_TOPN = 10000
+VOCAB_TOPN = 20000
 
 model = gensim.downloader.load('word2vec-google-news-300')
 
