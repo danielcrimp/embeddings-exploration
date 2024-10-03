@@ -21,6 +21,8 @@ I elected to choose a pretrained word2vec model, `'word2vec-google-news-300'`. A
 
 In `countries_to_capitals.py`, I've built a script which takes twenty country-to-capital pairs and averages the vectors relating each, attempting to yield a vector which could be used to retrieve the Capital city of a wider sample of countries.
 
+![relating countries to capitals](./images/country_to_capital.png)
+
 #### Results
 
 <p style="font-size: 12px;">
@@ -47,6 +49,8 @@ In `countries_to_capitals.py`, I've built a script which takes twenty country-to
 
 This is a dinky example, but provides decent evidence that at least this model has the semantic resolution(?) required to make retrievals of the sort we expect from a traditional database.
 
+I should note that we've made a bold assumption here that we can determine a universal relation vector for countries and capitals based on a simple average. In reality the relation would **have** to vary based on the input vector. In short - the similarity search we used to jump to the nearest word is doing a lot of work here.
+
 The incorrect guesses are my favourite - many guesses seem to point toward the most populous city in the country. Anecdotally, I know a lot of humans mistake Auckland and Sydney for capitals. Interestingly, in one case - Peru - the model selects instead the capital of its neighbour, Ecuador.
 
 There are also some cases of simple differences between the spelling of the input data and model vocabulary.
@@ -59,5 +63,5 @@ In this experiment, I'd like to try and generalise the method in Experiment 1. R
 
 On paper, we should be able to store a relation vector in the same way we store a word vector. From there, traditional clustering and similarity measures should be applicable.
 
-/// picture of plotting relation vectors in a new space and clustering
+![finding country:capital facts](./images/country_fact_search.png)
 
