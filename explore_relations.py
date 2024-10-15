@@ -15,7 +15,7 @@ with h5py.File('relationships.h5', 'r') as f:
 
 similarities = cosine_similarity([query_vector], stored_vectors)
 
-top_indices = similarities.argsort()[0][-100:][::-1]  # Top 10 most similar relationships
+top_indices = similarities.argsort()[0][-100:][::-1]  # Top 100 most similar relationships
 similar_relationships = [stored_pairs[i] for i in top_indices]
 
 pairs = []

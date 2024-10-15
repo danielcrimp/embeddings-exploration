@@ -65,3 +65,47 @@ On paper, we should be able to store a relation vector in the same way we store 
 
 ![finding country:capital facts](./images/country_fact_search.png)
 
+
+#### Results
+
+| Country                          | Capital      |
+|:---------------------------------|:-------------|
+| Russia                           | Moscow       |
+| Korea                            | Seoul        |
+| Malaysia                         | Kuala_Lumpur |
+| Japan                            | Tokyo        |
+| Turkey                           | Ankara       |
+| **... (14 records omitted) ...** |              |
+| India                            | Delhi        |
+| Thailand                         | Bangkok      |
+| Egypt                            | Cairo        |
+| Pakistan                         | Islamabad    |
+| Indonesia                        | Jakarta      |
+
+#### Thoughts
+
+With filtering, of 100 similar examples, we get 24 that are valid pairs. Most of these seem correct. This is 
+
+- Brazil got Rio de Janeiro, rather than Brasilia. Rio de Janeiro is a larger city, and was also the capital until 1960.
+- Italy got Turin, rather than Rome. This is unusual, because I don't think the Google News dataset goes back to the 1860s.
+- Australia got Sydney, rather than Canberra
+- Germany Munich, rather than Berlin
+- We got some weird Continent to City pairs returned - Africa and Nairobi, Europe and Athens.
+
+It would seem it's hard to distinguish between Countries/Capitals and other "big land, little land" pairs.
+
+#### Experimenting with other fact pairs
+
+Countries and Capitals are an easy pick, especially for a model trained on a News dataset. What about other Relations?
+
+Ideas:
+- Sportspeople and their main sports
+- Celebrities and their country of origin
+- Biological class-to-instance pairs - i.e. canine to dog, feline to cat, murine to mouse
+- Gender counterparts
+
+Unfortunately, even when trying many different example pairs, we get very poor performance - mostly junk that's returned. I draw this down to that these relations are much less salient in the embedding space than that of a Country-to-Capital relation. Intuition tells me that the words "dog" and "canine" will be covered less in News articles, so their semantic meaning will be less crystallised than the likes of Countries and Capitals.
+
+This Word2Vec model is also quite lightweight - a couple of gigabytes and 300 dimensions. To accurately express the meaning of 3M symbols with such a small representation would be impressive - indeed I find it impressive that it performs as well as it does. It may be that a larger, say, Sentence Transformer type model would capture relationships in more niche topics with more detail (although, we'd then require additional overhead of managing sub-word vocabularies and likely require more computational capability than my laptop).
+
+The idea of a signal-to-noise ratio comes to mind here: we get noisier results from less crystallised topics in w2v, and clearer results when looking into culturally prominent entities. 
