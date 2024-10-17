@@ -15,15 +15,13 @@ How could such a model be trained for arbitrary use-cases, like enterprise?
 
 ### Experiment 1: Proving the basic idea
 
-ML models are finicky and often don't behave how we expect. Our mind pictures the happy path, and clean results magically appearing. To mitigate this, I'm going to start with the simplest example.
-
-I elected to choose a pretrained word2vec model, `'word2vec-google-news-300'`. As the name suggests, it is trained on a dataset scraped from Google News.
+I'm going to start with the simplest example. I elected to choose a pretrained word2vec model, `'word2vec-google-news-300'`. As the name suggests, it is trained on a dataset scraped from Google News.
 
 In `countries_to_capitals.py`, I've built a script which takes twenty country-to-capital pairs and averages the vectors relating each, attempting to yield a vector which could be used to retrieve the Capital city of a wider sample of countries.
 
 ![relating countries to capitals](./images/country_to_capital.png)
 
-#### Results
+### Results
 
 <p style="font-size: 12px;">
 
@@ -49,15 +47,13 @@ In `countries_to_capitals.py`, I've built a script which takes twenty country-to
 
 This provides some evidence that at least this model has the semantic precision required to make retrievals of the sort we expect from a traditional database - at least in a very simple example with countries and capitals.
 
-I should note that we've made a bold assumption here that we can determine a universal relation vector for countries and capitals based on a simple average. In reality the relation would vary based on the input vector - in 300 dimensions the odds of the translation being consistent are minute. In short: the similarity search we used to jump to the nearest word is doing a lot of work here.
+I should note that we've made a bold assumption here that we can determine a single universal relation vector (a linear operation) for countries and capitals based on a simple average. In reality the relation vector would vary for each instance of a Country. In short, the similarity searches we do to jump to the nearest word (the red arrows in the above diagram) are doing a lot of work here.
 
-The incorrect guesses are my favourite - many guesses seem to point toward the most populous city in the country. Anecdotally, I know a lot of humans mistake Auckland and Sydney for capitals. Interestingly, in one case - Peru - the model selects instead the capital of its neighbour, Ecuador.
-
-There are also some cases of simple differences between the spelling of the input data and model vocabulary.
+Many incorrect guesses seem to point toward the most populous city in the country which could be due to over-representation in the training set. Anecdotally, I know a lot of humans mistake Auckland and Sydney for capitals.
 
 ### Experiment 2: Generalised fact retrieval from Embedding Space
 
-In Experiment 1, we showed evidence that facts can be somewhat reliably extracted from embedding space by calculating a relation vector from known relationships and applying it to word vectors from the same semantic category.
+In Experiment 1, we showed evidence that by processing the word embeddings relating a class of terms to another class of terms, we can somewhat reliably explore the semantic space around other words in the first class to find their counterparts in the second class.
 
 In this experiment, I'd like to try and generalise the method in Experiment 1. Rather than primitively bashing together a relation vector by averaging the vector from multiple known class-to-class examples, can we use more traditional data science techniques to bundle facts of similar meaning together?
 
@@ -141,3 +137,11 @@ The idea of a signal-to-noise ratio comes to mind here: we get noisier results f
 
 This Word2Vec model is quite lightweight - a couple of gigabytes and 300 dimensions. It may be that a larger, say, Sentence Transformer type model would capture relationships in more niche topics with more detail (although, we'd then require additional overhead of managing sub-word vocabularies and likely require more computational capability than my laptop).
 
+
+### Future Work
+
+- The "averaged relation vector" approach works in the example, but a trained MLP to relate instances to classes might be a better technique. 
+  - Bonus: could we provide column headers a la `SELECT female_term, male_term` and have the model find related instances from each column header?
+- Explain how a model might be trained to support a vocabulary of symbols internal to an organisation, i.e. Asset IDs.
+- Explain advantages of storing knowledge in high-dimensional semantic space, rather than low-dimensional fact tables (predictions, fixing poor data quality, massively more flexible schema)
+  - Fixing poor data quality is basically the entire point of this experimentation so that I'm first mentioning it here is kinda silly
