@@ -1,9 +1,9 @@
 import gensim.downloader
 import h5py
+import sys
 from sklearn.metrics.pairwise import cosine_similarity
 
-query_left = 'Beijing'
-query_right = 'China'
+query_left, query_right = sys.argv[1], sys.argv[2]
 
 model = gensim.downloader.load('word2vec-google-news-300')
 
@@ -18,19 +18,12 @@ similarities = cosine_similarity([query_vector], stored_vectors)
 top_indices = similarities.argsort()[0][-100:][::-1]  # Top 100 most similar relationships
 similar_relationships = [stored_pairs[i] for i in top_indices]
 
-pairs = []
+decoded_pairs = [(word1.decode('utf-8'), word2.decode('utf-8')) for word1, word2 in stored_pairs[top_indices]]
 
-for pair in similar_relationships:
-    word1, word2 = pair
-    word1 = word1.decode('utf-8')
-    word2 = word2.decode('utf-8')
-    pairs.append((word1, word2))
+scanned = {query_left, query_right}
 
-
-scanned = set([query_left, query_right])
-
-for pair in pairs:
-    if pair[0] not in scanned and pair[1] not in scanned:
+for pair in decoded_pairs:
+    if not scanned.intersection(pair):
         scanned.update(pair)
         print(pair)
 
