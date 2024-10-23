@@ -1,8 +1,20 @@
 # Embeddings Models as a Knowledge store
 
-Embeddings models allow us to place words as points - vectors - in high-dimensional space - 300 dimensions or even higher. These dimensions represent meaning:
+Relational Databases remain to be an industry standard. These store knowledge in rigidly defined schemas, which makes them easy to understand, troubleshoot, implement and interact with. Graph Databases present an alternative to Relational DBs - storing data in an intuitive format with more flexible schemas. These work well for representations of networks - electrical networks, communications, logistics, etc.
+
+A common problem in software development is poor **data quality**. In my experience, a common feature of issues relating to data quality is that the requirements of the system in question have changed since its design. For example, a job scheduling register initially designed for humans to interact with suddenly requires machine interaction, and existing free-text fields in the register are unsuitable for that. Or, a schema containing asset data requires an additional field estimating rainfall at each asset, to be used in a rust prevention work programme. The rigidity of the relational database schema becomes a restriction rather than a benefit here. To estimate rainfall and understand the free-text fields, we'll likely have to move out of the database and into ad-hoc local data manipulation.
+
+Data quality issues seem unrelated to type of database - relational, graph, whatever - we select. These methods have difficulties in that editing their schema to support new concepts is a costly exercise.
+
+Semantic space 
 
 If we were to take a word and translate it in this space, moving it along one (likely many more) of these dimensions, we would change its meaning. In this way, we can take the vector for `'queen'` and adjust it by some vector to return `'king'`. This is a classic example used to explain embeddings spaces, but I feel this notion could be explored further.
+
+That we can move from one point in space, move along some bearing and land on a related term implies that a populated semantic space contains facts - like a triple:
+
+`king -> gender_counterpart -> queen`
+
+`gender_counterpart` relationships are not directly visible or explicitly written, but are captured in the words' positions in semantic space.
 
 This translation in the embeddings space could be likened to drawing a triple, or an edge, in a knowledge graph, or adding a record to a relational database. In the above example, we took two symbols, 'queen' and 'king', and (implicitly) drew a 'gender_counterpart' connection between the two, thus realising a fact.
 Could we extend this analogy and somehow interact with embeddings spaces as a traditional knowledge store?
