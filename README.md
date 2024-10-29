@@ -4,9 +4,15 @@ Relational Databases remain to be an industry standard. These store knowledge in
 
 A common problem in software development is poor **data quality**. In my experience, a common feature of issues relating to data quality is that the requirements of the system in question have changed since its design. For example, a job scheduling register initially designed for humans to interact with suddenly requires machine interaction, and existing free-text fields in the register are unsuitable for that. Or, a schema containing asset data requires an additional field estimating rainfall at each asset, to be used in a rust prevention work programme. The rigidity of the relational database schema becomes a restriction rather than a benefit here. To estimate rainfall and understand the free-text fields, we'll likely have to move out of the database and into ad-hoc local data manipulation.
 
-Data quality issues seem unrelated to type of database - relational, graph, whatever - we select. These methods have difficulties in that editing their schema to support new concepts is a costly exercise.
+Data quality issues seem unrelated to type of database - relational, graph, whatever - we select. These methods have difficulties in that editing their schema to support new concepts and populating the new schema with accurate information is a costly exercise.
 
-Semantic space 
+I have a theory that semantic spaces could be a method of storing knowledge that would have a much easier time adapting to newer concepts, and therefore be more resilient to data quality issues.
+
+Further, I believe fine-tuning **foundational** embeddings models (which capture general knowledge of the world) to organisational data (which capture organisational knowledge) could mean businesses can connect internal symbols (i.e. a number representing a Circuit - CCT-20543772) through arbitrary external symbols (i.e. locations, weather conditions) to useful data (estimates of moisture content per circuit, to inform a rust-prevention programme). In this way, semantic knowledge stores could present a transformative database technology. However, the practicality of such a database, reliability, implementation details, strengths, weaknesses and interaction modes are unclear.
+
+// explain that populated semantic space can be expressed as a triplestore with a whole bunch of facts of varying validity.
+
+This method of storing information could also hold or be augmented with a predictive capability that would allow extrapolation of facts from what has been provided.
 
 If we were to take a word and translate it in this space, moving it along one (likely many more) of these dimensions, we would change its meaning. In this way, we can take the vector for `'queen'` and adjust it by some vector to return `'king'`. This is a classic example used to explain embeddings spaces, but I feel this notion could be explored further.
 
