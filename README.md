@@ -1,4 +1,4 @@
-# Embeddings Models as a Knowledge store
+# Semantic Space as a Knowledge store
 
 Relational Databases remain to be an industry standard. These store knowledge in rigidly defined schemas, which makes them easy to understand, troubleshoot, implement and interact with. Graph Databases present an alternative to Relational DBs - storing data in an intuitive format with more flexible schemas. These work well for representations of networks - electrical networks, communications, logistics, etc.
 
@@ -15,7 +15,7 @@ This method of storing information could also hold or be augmented with a predic
 
 ### How are facts represented in semantic space?
 
-There are no explicit facts in this space as in a RDBMS, Graph or Triplestore - just associations of varying strength. However, we can learn to explore the space to extract information similar to a traditional DB.
+There are no explicit facts in this space as in a Relational DB, Graph or Triplestore - just associations of varying strength. However, we can learn to explore the space to extract information similar to a traditional DB.
 
 If meanings of symbols (words) are represented by position in semantic space, then relationships between symbols are represented by displacement.
 
