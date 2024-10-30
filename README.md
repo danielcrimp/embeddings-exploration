@@ -129,7 +129,7 @@ This Word2Vec model is quite lightweight - a couple of gigabytes and 300 dimensi
     
     One method I can think to achieve this would be - as ridiculous as it sounds - to use an LLM to generate screeds of articles about organisational symbols based on the table, then fine tune an embeddings model on those articles.
     
-    From there it would be as simple as demonstrating that we can reliably link organisational assets to information outside of the fictional table.
+    From there it would be as simple as demonstrating that we can link organisational assets to information outside of the fictional table, as well as reliably retrieve all the information on the organisational assets from semantic space.
 
 - **Semantic Query Engine**
 
