@@ -12,8 +12,7 @@ Further, fine-tuning **foundational** embeddings models (which capture general k
 
 This method of storing information could also hold or be augmented with a predictive capability that would allow extrapolation of facts from what has been provided.
 
-
-### How are facts represented in semantic space?
+### How are facts represented in Semantic Space?
 
 There are no explicit facts in this space as in a Relational DB, Graph or Triplestore - just associations of varying strength. However, we can learn to explore the space to extract information similar to a traditional DB.
 
@@ -23,7 +22,9 @@ This is actually exemplified in the popular "king and queen" example. With a tra
 
 ### Experiment 1: Learning to Explore Semantic Space
 
-The king and queen example shows we can find facts by exploring semantic space. How dependable is this method?  I'm going to start with the simplest example. I elected to choose a pretrained word2vec model, `'word2vec-google-news-300'`. As the name suggests, it is trained on a dataset scraped from Google News.
+The king and queen example suggests we can find facts - like querying a database - by exploring semantic space. Let's have a go at doing this.
+
+I'm going to start with the simplest example. I went with a pretrained word2vec embedding model, `'word2vec-google-news-300'`.
 
 In `countries_to_capitals.py`, I've built a script which takes twenty country-to-capital pairs and averages the vectors relating each, attempting to yield a vector which could be used to retrieve the Capital city of a wider sample of countries.
 
@@ -53,23 +54,15 @@ In `countries_to_capitals.py`, I've built a script which takes twenty country-to
 
 #### Thoughts
 
-This provides some evidence that at least this model has the semantic precision required to make retrievals of the sort we expect from a traditional database - at least in a very simple example with countries and capitals.
+This is a scaled-up version of the king and queen example we looked at above. It appears to work decently. However, we took a shortcut in that we had a list of countries to begin with. Plus, we needed to calculate a relationship vector from a considerable sample of known values.
 
-I should note that we've made a bold assumption here that we can determine a single universal relation vector (a linear operation) for countries and capitals based on a simple average. In reality the relation vector would vary for each instance of a Country. In short, the similarity searches we do to jump to the nearest word (the red arrows in the above diagram) are doing a lot of work here.
+### Experiment 2: Retrieving Similar Relationships from Semantic Space
 
-Many incorrect guesses seem to point toward the most populous city in the country which could be due to over-representation in the training set. Anecdotally, I know a lot of humans mistake Auckland and Sydney for capitals.
-
-### Experiment 2: Generalised fact retrieval from Embedding Space
-
-In Experiment 1, we showed evidence that by processing the word embeddings relating a class of terms to another class of terms, we can somewhat reliably explore the semantic space around other words in the first class to find their counterparts in the second class.
-
-In this experiment, I'd like to try and generalise the method in Experiment 1. Rather than primitively bashing together a relation vector by averaging the vector from multiple known class-to-class examples, can we use more traditional data science techniques to bundle facts of similar meaning together?
-
-On paper, we should be able to store a relation vector in the same way we store a word vector. From there, traditional clustering and similarity measures should be applicable.
+I had an idea that we could store a relation vector in the same way we store a word vector. From there, we could use traditional clustering and similarity measures to retrieve pairs of symbols with similar relationships. This experiment somewhat generalises the approach used in Experiment 1.
 
 ![finding country:capital facts](./images/country_fact_search.png)
 
-In `save_relations.py`, I've built a script which takes the most popular terms in the model's vocabulary and saves the relation vectors between each, as above. This is a memory-heavy process, so I've used .h5 binaries for storage.
+In `save_relations.py`, I've built a script which takes the most popular terms in the model's vocabulary and saves the relation vectors between each, as above. This is a memory-heavy process, so I've used .h5 binaries for storage. You can then provide a pair of words that you know are related, and the script will find the most similar relation vectors. I had to filter these so that duplicate values are removed, so it only really supports one-to-one relationships.
 
 #### Results
 
@@ -91,32 +84,6 @@ In `save_relations.py`, I've built a script which takes the most popular terms i
 | Pakistan                         | Islamabad    |
 | Indonesia                        | Jakarta      |
 
-#### Thoughts
-
-With filtering, of 100 similar examples, we get 24 that are valid pairs. Most of these seem correct.
-
-- Brazil got Rio de Janeiro, rather than Brasilia. Rio de Janeiro is a larger city, and was also the capital until 1960.
-- Italy got Turin, rather than Rome. This is unusual, because I don't think the Google News dataset goes back to the 1860s.
-- Australia got Sydney, rather than Canberra
-- Germany Munich, rather than Berlin
-- We got some weird Continent to City pairs returned - Africa and Nairobi, Europe and Athens.
-
-It would seem it's hard to distinguish between Countries/Capitals and other "big land, little land" pairs.
-
-So, a mild success in 'querying' an embeddings model, using an example fact.
-
-#### Experimenting with other fact pairs
-
-Countries and Capitals are an easy pick, especially for a model trained on a News dataset. What about other Relations?
-
-Ideas:
-- Sportspeople and their main sports
-- Celebrities and their country of origin
-- Biological class-to-instance pairs - i.e. canine to dog, feline to cat, murine to mouse
-- Gender counterparts
-
-Let's try some.
-
 `python explore_relations.py federer switzerland`
 
 | left        | right   |
@@ -124,8 +91,6 @@ Let's try some.
 | Switzerland | Roddick |
 | Germany     | Agassi  |
 | Italy       | Safina  |
-
-...uhhh...
 
 `python explore_relations.py mouse murine`
 
@@ -137,19 +102,47 @@ Let's try some.
 | RNA  | app      |
 | NA   | locate   |
 
-...uh-oh.
 
-Unfortunately, even when trying many different example pairs, we get very poor performance - mostly junk that's returned. My guess is that these relations are much less salient in the embedding space than that of a Country-to-Capital relation. That is, "dog" and "canine" will be mentioned in fewer News articles than countries and capitals, so the vector representing their meaning will be less accurate.
+#### Thoughts
 
-The idea of a signal-to-noise ratio comes to mind here: we get noisier results from less crystallised topics, and clearer results when looking into more culturally prominent entities. 
+For the Country-to-Capital example, of 100 similar examples, we get 24 that are valid pairs (i.e. not duplicates). Most of these seem correct.
 
-This Word2Vec model is quite lightweight - a couple of gigabytes and 300 dimensions. It may be that a larger, say, Sentence Transformer type model would capture relationships in more niche topics with more detail (although, we'd then require additional overhead of managing sub-word vocabularies and likely require more computational capability than my laptop).
+Unfortunately, the quality of results degrades rapidly as we try less prominent words. I'm guessing there is less information on Animal-to-Class relationships than Country-to-Capital relationships in the training data for `'word2vec-google-news-300'`. The idea of a signal-to-noise ratio comes to mind here.
 
+This Word2Vec model is quite lightweight - a couple of gigabytes and 300 dimensions. It may be that a larger, say, Sentence Transformer type model would capture relationships in more niche topics with more detail.
 
 ### Future Work
 
-- The "averaged relation vector" approach works in the example, but a trained MLP to relate instances to classes might be a better technique. 
-  - Bonus: could we provide column headers a la `SELECT female_term, male_term` and have the model find related instances from each column header?
-- Explain how a model might be trained to support a vocabulary of symbols internal to an organisation, i.e. Asset IDs.
-- Explain advantages of storing knowledge in high-dimensional semantic space, rather than low-dimensional fact tables (predictions, fixing poor data quality, massively more flexible schema)
-  - Fixing poor data quality is basically the entire point of this experimentation so that I'm first mentioning it here is kinda silly
+- **Investigating Training on Organisational Data**
+
+    We glossed over that we could have foundation models fine-tuned on organisational data - that's definitely possible, but to serve as a general-purpose database the schema of the existing databases would need to preserved.
+    
+    We'd need to devise a method of fine-tuning that would allow the hard relationships stored in a relational database to be converted into associations in semantic space, in such a way that we can reliably query the systematic data, but also use semantic traversals(?) to connect organisational data to general external data.
+
+- **Toy Example**
+
+    At the moment the "Semantic Database" has been proposed alongside some short python scripts and conjecture. It would be useful to provide some more concrete evidence of the idea's validity.
+    
+    Firstly, we could set up a low-dimensional space with arbitrary symbols to demonstrate the capability of relating organisational data from a rigid schema to broader concepts. We know this is possible though.
+
+    To fully demonstrate plausibility, you could go as far as generating simple data (say, a fictional table of Asset data) and finding a way to fine tune an existing model such that these Assets land in a sensible location in semantic space.
+    
+    One method I can think to achieve this would be - as ridiculous as it sounds - to use an LLM to generate screeds of articles about organisational symbols based on the table, then fine tune an embeddings model on those articles.
+    
+    From there it would be as simple as demonstrating that we can reliably link organisational assets to information outside of the fictional table.
+
+- **Semantic Query Engine**
+
+    In traditional databases, we have query engines that can interpret stuff like:
+
+    `SELECT country, capital_city FROM countries`
+
+    or 
+
+    `MATCH (a:Word)-[:GENDER_RELATION]->(b:Word)
+    RETURN a.term AS feminine_term, b.term AS masculine_term`
+
+    But to query a Semantic Database would have to be quite a bit more complicated. I can only really speculate here.
+
+    Intuitively, I'd think you'd have to have a model parallel to your embeddings model that would somehow learn to explore the semantic space to answer questions. So the query language would be natural-ish. Perhaps you'd say: `"Give me every Asset installed in a location with a high population"`. You might have a model that extracts the symbols (Asset, Location), qualifiers (high population) and relations (installed in) in the query, which informs an agent to traverse the semantic space, returning hits as they come. The agent might learn to make hops to intermediate symbols. 
+
