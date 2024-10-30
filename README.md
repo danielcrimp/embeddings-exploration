@@ -1,4 +1,4 @@
-# Embeddings Models as a Knowledge store
+# Semantic Space as a Knowledge store
 
 Relational Databases remain to be an industry standard. These store knowledge in rigidly defined schemas, which makes them easy to understand, troubleshoot, implement and interact with. Graph Databases present an alternative to Relational DBs - storing data in an intuitive format with more flexible schemas. These work well for representations of networks - electrical networks, communications, logistics, etc.
 
@@ -15,19 +15,15 @@ This method of storing information could also hold or be augmented with a predic
 
 ### How are facts represented in semantic space?
 
-// explain that populated semantic space can be expressed as a triplestore with a whole bunch of facts of varying validity.
+There are no explicit facts in this space as in a Relational DB, Graph or Triplestore - just associations of varying strength. However, we can learn to explore the space to extract information similar to a traditional DB.
 
-My knowledge on this is not exhaustive, but we can make conclusions inductively by analysing canonical examples used to explain semantic space. The TLDR is: if meanings of symbols (words) are represented by position in semantic space, then relationships between symbols are represented by displacement. Let's look at the popular "king and queen" example.
+If meanings of symbols (words) are represented by position in semantic space, then relationships between symbols are represented by displacement.
 
-In a suitably trained embeddings model, we can take the vector produced from the word `king`, subtract the vector for the word `man` and add the vector for `woman` and arrive at/near `queen`.
+This is actually exemplified in the popular "king and queen" example. With a trained embeddings model, we can take the vector produced from the word `queen`, subtract the vector for the word `woman` and add the vector for `man` and arrive at/near `king`. We took a known relationship and applied it to a symbol in the same category - effectively learning how to explore the semantic space for gender-counterpart relationships. Experiment 1 pushes this idea slightly further.
 
-That we can move from one point in space, move along some bearing and land on a related term implies that a populated semantic space contains facts - the female version of king is queen. Traditionally we could store this fact as a record in a relational database or a triple in a triple store.
+### Experiment 1: Learning to Explore Semantic Space
 
-These facts aren't easily extracted, though - we didn't run a query, like `SELECT male_term, female term FROM gendered_words`. In this case we already knew how to explore the space to find the related term because we could take symbols known to be similarly related and apply the difference. How reliable is this idea
-
-### Experiment 1: Proving the basic idea
-
-I'm going to start with the simplest example. I elected to choose a pretrained word2vec model, `'word2vec-google-news-300'`. As the name suggests, it is trained on a dataset scraped from Google News.
+The king and queen example shows we can find facts by exploring semantic space. How dependable is this method?  I'm going to start with the simplest example. I elected to choose a pretrained word2vec model, `'word2vec-google-news-300'`. As the name suggests, it is trained on a dataset scraped from Google News.
 
 In `countries_to_capitals.py`, I've built a script which takes twenty country-to-capital pairs and averages the vectors relating each, attempting to yield a vector which could be used to retrieve the Capital city of a wider sample of countries.
 
