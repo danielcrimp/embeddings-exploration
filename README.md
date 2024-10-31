@@ -2,11 +2,11 @@
 
 Relational Databases remain to be an industry standard. These store knowledge in rigidly defined schemas, which makes them easy to understand, troubleshoot, implement and interact with. Graph Databases present an alternative to Relational DBs - storing data in an intuitive format with more flexible schemas. These work well for representations of networks - electrical networks, communications, logistics, etc.
 
-A common problem in software development is poor **data quality**. In my experience, a common feature of issues relating to data quality is that the requirements of the system in question have changed since its design. For example, a job scheduling register initially designed for humans to interact with suddenly requires machine interaction, and existing free-text fields in the register are unsuitable for that. Or, a schema containing asset data requires an additional field estimating rainfall at each asset, to be used in a rust prevention work programme. The rigidity of the relational database schema becomes a restriction rather than a benefit here. To estimate rainfall and understand the free-text fields, we'll likely have to move out of the database and into ad-hoc local data manipulation.
+A common problem in software development is poor **data quality**. In my experience, a common feature of issues relating to data quality is that the requirements of the system in question have changed since its design. For example, a job scheduling register initially designed for humans to interact with suddenly requires machine interaction, and existing free-text fields in the register are unsuitable for that. Or, a rust-prevention programme of work requires data estimating rainfall at each asset, and the schema doesn't have such a field. The rigidity of the relational database schema becomes a restriction rather than a benefit here. To estimate rainfall and understand the free-text fields, we'll likely have to move out of the database and into ad-hoc local data manipulation.
 
-Data quality issues seem unrelated to type of database - relational, graph, whatever - we select. These methods have difficulties in that editing their schema to support new concepts and populating the new schema with accurate information is a costly exercise.
+Data quality issues seem unrelated to the type of database - relational, graph, whatever - we select. These methods have difficulties in that editing their schema to support new concepts and populating the new schema with accurate information is a costly exercise.
 
-I have a theory that semantic spaces could be a method of storing knowledge that would have a much easier time adapting to newer concepts, and therefore be more resilient to data quality issues.
+I have a theory that semantic spaces could be a method of storing knowledge that would have a much easier time adapting to changing requirements, and therefore be more resilient to data quality issues.
 
 Further, fine-tuning **foundational** embeddings models (which capture general knowledge of the world) to organisational data (which capture organisational knowledge) could mean businesses can connect internal symbols (i.e. a number representing a Circuit - CCT-20543772) through arbitrary external symbols (i.e. locations, weather conditions) to useful data (estimates of moisture content per circuit, to inform a rust-prevention programme). In this way, semantic knowledge stores could present a transformative database technology. However, the practicality of such a database, reliability, implementation details, strengths, weaknesses and interaction modes are unclear.
 
@@ -115,7 +115,7 @@ This Word2Vec model is quite lightweight - a couple of gigabytes and 300 dimensi
 
 - **Investigating Training on Organisational Data**
 
-    We glossed over that we could have foundation models fine-tuned on organisational data - that's definitely possible, but to serve as a general-purpose database the schema of the existing databases would need to preserved.
+    We glossed over that we could have foundation models fine-tuned on organisational data - that's definitely possible, but to serve as a general-purpose database the schema of the existing databases would need to be preserved.
     
     We'd need to devise a method of fine-tuning that would allow the hard relationships stored in a relational database to be converted into associations in semantic space, in such a way that we can reliably query the systematic data, but also use semantic traversals(?) to connect organisational data to general external data.
 
